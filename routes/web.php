@@ -45,3 +45,11 @@ $app->get('/get_mapstyles', function () use ($app) {
   // return response()->json($data);
   return $data;
 });
+
+//Save New Map Style
+$app->post('/save_new_map_style', function () use ($app) {
+    $content = json_decode(app()->request->getContent(), true);
+    // $data = app()->request->only(['name', 'url', 'author', 'image', 'github', 'jsonStyle', 'type']);
+    $id = app(MapStyles::class)->saveNewMapStyle($content);
+  return $id;
+});
