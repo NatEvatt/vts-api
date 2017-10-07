@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\User;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
+use Lcobucci\JWT\Parser;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -31,9 +32,34 @@ class AuthServiceProvider extends ServiceProvider
         // the User instance via an API token or any other method necessary.
 
         $this->app['auth']->viaRequest('api', function ($request) {
-            if ($request->input('api_token')) {
-                return User::where('api_token', $request->input('api_token'))->first();
+            $token = $request->input('token', $request->bearerToken());
+            if ($token) {
+                $parsed = (new Parser())->parse((string) $token);
+                $name = $parsed->getClaim('name');
+                if ($parsed) {
+                    $userArray = array(
+                        "name"=>$parsed->getClaim('name'),
+                        "email"=>$parsed->getClaim('email'),
+                        "id"=>$parsed->getClaim('sub'));
+                    return new User($userArray);
+                }
+                return false;
             }
         });
+
+
+
+
+        // $this->app['auth']->viaRequest('api', function ($request) {
+        //     // get token from request input or authorization header
+        //     $token = $request->input('token', $request->bearerToken());
+        //     if ($token) {
+        //         $parsed = app(TokenWrangler::class)->getContext($token);
+        //         if ($parsed) {
+        //             return new User($parsed);
+        //         }
+        //     }
+        //     return false;
+        // });
     }
 }

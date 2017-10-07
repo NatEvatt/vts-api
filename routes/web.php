@@ -24,12 +24,6 @@ ____   _______________         _____ __________.___
         Running on {$app->version()} </pre>";
 });
 
-//Test
-$app->get('/howdy', function () use ($app) {
-  $thisVar = "Yo What up Blood!";
-  return $thisVar;
-});
-
 //Return Map Styles
 $app->get('/get_mapstyles', function () use ($app) {
   $thisVar = "I am going to return the maps styles";
@@ -38,10 +32,20 @@ $app->get('/get_mapstyles', function () use ($app) {
   return $data;
 });
 
-//Save New Map Style
-$app->post('/save_new_map_style', function () use ($app) {
-    $content = json_decode(app()->request->getContent(), true);
-    // $data = app()->request->only(['name', 'url', 'author', 'image', 'github', 'jsonStyle', 'type']);
-    $id = app(MapStyles::class)->saveNewMapStyle($content);
-  return $id;
+$app->group(['middleware' => 'auth'], function () use ($app) {
+//Must have a token for all api routes here
+
+    //Test
+    $app->get('/howdy', function () use ($app) {
+        $name = app()->request->user()->name;
+        $thisVar = "Yo What up Blood! The username is " . $name;
+        return $thisVar;
+    });
+
+    //Save New Map Style
+    $app->post('/save_new_map_style', function () use ($app) {
+        $content = json_decode(app()->request->getContent(), true);
+        $id = app(MapStyles::class)->saveNewMapStyle($content);
+      return $id;
+    });
 });
