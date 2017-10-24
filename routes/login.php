@@ -7,11 +7,8 @@ use Lcobucci\JWT\Parser;
 //Token
 $app->get('/token', function () use ($app) {
     $data = new ValidationData(); // It will use the current time to validate (iat, nbf and exp)
-    // $data->setIssuer('accounts.google.com');
     $data->setIssuer(env('googleIssuer', false));
     $data->setAudience(env('googleAudience', false));
-    // $data->setAudience('357217477337-f2ifm717ikgaobrp8oqjtp3hs45d4ib0.apps.googleusercontent.com');
-    // $data->setId('4f1g23a12aa');
 
     //create token from string
     // $token = app()->request->header('Authorization');

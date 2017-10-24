@@ -45,6 +45,7 @@ $app->group(['middleware' => 'auth'], function () use ($app) {
     //Save New Map Style
     $app->post('/save_new_map_style', function () use ($app) {
         $content = json_decode(app()->request->getContent(), true);
+        $content['user_id'] = app()->request->user()->user_id;
         $id = app(MapStyles::class)->saveNewMapStyle($content);
       return $id;
     });

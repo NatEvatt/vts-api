@@ -37,11 +37,11 @@ class AuthServiceProvider extends ServiceProvider
                 $parsed = (new Parser())->parse((string) $token);
                 $name = $parsed->getClaim('name');
                 if ($parsed) {
-                    $userArray = array(
-                        "name"=>$parsed->getClaim('name'),
-                        "email"=>$parsed->getClaim('email'),
-                        "id"=>$parsed->getClaim('sub'));
-                    return new User($userArray);
+                    $theUser = new User();
+                    $theUser->user_id = $parsed->getClaim('sub');
+                    $theUser->name = $parsed->getClaim('name');
+                    $theUser->email = $parsed->getClaim('email');
+                    return $theUser;
                 }
                 return false;
             }
