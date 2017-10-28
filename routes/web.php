@@ -26,7 +26,6 @@ ____   _______________         _____ __________.___
 
 //Return Map Styles
 $app->get('/get_mapstyles', function () use ($app) {
-  $thisVar = "I am going to return the maps styles";
   $data = app(MapStyles::class)->getMapStyles();
   // return response()->json($data);
   return $data;
@@ -48,5 +47,13 @@ $app->group(['middleware' => 'auth'], function () use ($app) {
         $content['user_id'] = app()->request->user()->user_id;
         $id = app(MapStyles::class)->saveNewMapStyle($content);
       return $id;
+    });
+
+    //Edit Map Style
+    $app->post('/edit_map_style', function () use ($app) {
+        $content = json_decode(app()->request->getContent(), true);
+        $content['user_id'] = app()->request->user()->user_id;
+        $results = app(MapStyles::class)->editMapStyle($content);
+      return $results;
     });
 });
