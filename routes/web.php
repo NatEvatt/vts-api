@@ -56,4 +56,39 @@ $app->group(['middleware' => 'auth'], function () use ($app) {
         $results = app(MapStyles::class)->editMapStyle($content);
       return $results;
     });
+
+    //Upload Image
+    $app->post('/upload_image', function () use ($app) {
+
+        // only allow images
+        $mimeTypes = ['image/png', 'image/jpeg', 'image/gif', 'image/bmp'];
+        $photoDir = storage_path("bmps/bmp_{$idbmp}");
+        $files = app()->request->file();
+        $list = [];
+        foreach ($files as $file) {
+            if ($file->isValid() && in_array($file->getMimeType(), $mimeTypes)) {
+
+                // save file
+                $filename = 'img_'.date('Ymd-His')."_".$file->getClientOriginalName();
+                $file->move($photoDir, $filename);
+
+                // generate a thumbnail
+                $thumb = Image::make("$photoDir/$filename")->resize(80, 80,  function ($constraint) {
+                    $constraint->aspectRatio();
+                });
+                $thumb->save("$photoDir/thumb_{$filename}");
+
+                $list[] = [
+                    'filename' => $filename,
+                    'thumb' => "/ms4s/$groupId/bmps/$idbmp/thumbs/$filename",
+                    'full' => "/ms4s/$groupId/bmps/$idbmp/photos/$filename"
+                ];
+            }
+        }
+        return response()->json($list, 201);
+
+        // $results = app(MapStyles::class)->editMapStyle($content);
+        echo "shiza";
+      return "shooza";
+    });
 });
