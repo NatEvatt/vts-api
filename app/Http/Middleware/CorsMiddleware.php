@@ -39,6 +39,12 @@ class CorsMiddleware
         }
 
         // Execute route and attach headers to response
-        return $next($request)->withHeaders($headers);
+        $response = $next($request);
+
+        // BinaryFileResponse doesn't support the 'withHeaders' method
+        foreach ($headers as $key => $value) {
+            $response->headers->set($key, $value);
+        }
+        return $response;
     }
 }

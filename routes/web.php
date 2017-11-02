@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Gate;
-
 use App\Models\MapStyles;
 
 //  Include Single Sign-On Routes
@@ -58,11 +57,11 @@ $app->group(['middleware' => 'auth'], function () use ($app) {
     });
 
     //Upload Image
-    $app->post('/upload_image', function () use ($app) {
+    $app->post('/upload_image/{mapStyle}', function ($mapStyle) use ($app) {
 
         // only allow images
         $mimeTypes = ['image/png', 'image/jpeg', 'image/gif', 'image/bmp'];
-        $photoDir = storage_path("bmps/bmp_{$idbmp}");
+        $photoDir = storage_path("mapPreviews/{$mapStyle}");
         $files = app()->request->file();
         $list = [];
         foreach ($files as $file) {
@@ -80,8 +79,8 @@ $app->group(['middleware' => 'auth'], function () use ($app) {
 
                 $list[] = [
                     'filename' => $filename,
-                    'thumb' => "/ms4s/$groupId/bmps/$idbmp/thumbs/$filename",
-                    'full' => "/ms4s/$groupId/bmps/$idbmp/photos/$filename"
+                    'thumb' => "/mapPreviews/$mapStyle/thumbs/$filename",
+                    'full' => "/mapPreviews/$mapStyle/photos/$filename"
                 ];
             }
         }
@@ -91,4 +90,26 @@ $app->group(['middleware' => 'auth'], function () use ($app) {
         echo "shiza";
       return "shooza";
     });
+
+    //Display thumbnail
+    $app->get('getPreview/{mapStyle}/thumbs/{filename}', function ($mapStyle, $filename) {
+        $filename = urldecode($filename);
+        $thumbPath = storage_path("bmps/{$mapStyle}/thumb_{$filename}");
+        if (is_file($thumbPath)) {
+           return response()->download($thumbPath);
+        } else {
+            $photoPath = storage_path("bmps/bmp_{$idbmp}/$filename");
+            if (is_file($photoPath)) {
+                $thumb = Image::make($photoPath)->resize(80, 80,  function ($constraint) {
+                    $constraint->aspectRatio();
+                });
+                $thumb->save($thumbPath);
+               return response()->download($thumbPath);
+            }
+        }
+        return response('', 404);
+    });
+
 });
+
+?>
