@@ -1,5 +1,4 @@
 <?php
-
 use Illuminate\Support\Facades\Gate;
 use App\Models\MapStyles;
 
@@ -87,15 +86,17 @@ $app->group(['middleware' => 'auth'], function () use ($app) {
         return response()->json($list, 201);
 
         // $results = app(MapStyles::class)->editMapStyle($content);
-        echo "shiza";
+        // echo "shiza";
       return "shooza";
     });
 
     //Display thumbnail
     $app->get('getPreview/{mapStyle}/thumbs/{filename}', function ($mapStyle, $filename) {
         $filename = urldecode($filename);
-        $thumbPath = storage_path("bmps/{$mapStyle}/thumb_{$filename}");
+        // $thumbPath = storage_path("bmps/{$mapStyle}/thumb_{$filename}");
+        $thumbPath = storage_path("bmps/{$mapStyle}/mapIcon.png");
         if (is_file($thumbPath)) {
+            echo "hello";
            return response()->download($thumbPath);
         } else {
             $photoPath = storage_path("bmps/bmp_{$idbmp}/$filename");
@@ -111,5 +112,3 @@ $app->group(['middleware' => 'auth'], function () use ($app) {
     });
 
 });
-
-?>
