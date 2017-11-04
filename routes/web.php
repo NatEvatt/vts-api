@@ -29,6 +29,31 @@ $app->get('/get_mapstyles', function () use ($app) {
   return $data;
 });
 
+//Display thumbnail
+$app->get('getPreview/thumbs/{filename}', function ($filename) {
+    $filename = urldecode($filename);
+    // $thumbPath = storage_path("bmps/{$mapStyle}/thumb_{$filename}");
+    $thumbPath = storage_path("mapPreviews/{$filename}");
+    if (is_file($thumbPath)) {
+        return Image::make($thumbPath)->response();
+    } else {
+
+    }
+    return response('', 404);
+});
+
+$app->get('getPreview/full/{filename}', function ($filename) {
+    $filename = urldecode($filename);
+    // $thumbPath = storage_path("bmps/{$mapStyle}/thumb_{$filename}");
+    $thumbPath = storage_path("mapPreviews/{$filename}");
+    if (is_file($thumbPath)) {
+        return Image::make($thumbPath)->response();
+    } else {
+
+    }
+    return response('', 404);
+});
+
 $app->group(['middleware' => 'auth'], function () use ($app) {
 //Must have a token for all api routes here
 
@@ -60,7 +85,8 @@ $app->group(['middleware' => 'auth'], function () use ($app) {
 
         // only allow images
         $mimeTypes = ['image/png', 'image/jpeg', 'image/gif', 'image/bmp'];
-        $photoDir = storage_path("mapPreviews/{$mapStyle}");
+        $photoThumbDir = storage_path("mapPreviews/thumbs");
+        $photoDir = storage_path("mapPreviews");
         $files = app()->request->file();
         $list = [];
         foreach ($files as $file) {
@@ -71,9 +97,10 @@ $app->group(['middleware' => 'auth'], function () use ($app) {
                 $file->move($photoDir, $filename);
 
                 // generate a thumbnail
-                $thumb = Image::make("$photoDir/$filename")->resize(80, 80,  function ($constraint) {
+                $thumb = Image::make("$photoDir/$filename")->resize(300, null,  function ($constraint) {
                     $constraint->aspectRatio();
                 });
+                $thumb->crop(300, 200);
                 $thumb->save("$photoDir/thumb_{$filename}");
 
                 $list[] = [
@@ -90,25 +117,6 @@ $app->group(['middleware' => 'auth'], function () use ($app) {
       return "shooza";
     });
 
-    //Display thumbnail
-    $app->get('getPreview/{mapStyle}/thumbs/{filename}', function ($mapStyle, $filename) {
-        $filename = urldecode($filename);
-        // $thumbPath = storage_path("bmps/{$mapStyle}/thumb_{$filename}");
-        $thumbPath = storage_path("bmps/{$mapStyle}/mapIcon.png");
-        if (is_file($thumbPath)) {
-            echo "hello";
-           return response()->download($thumbPath);
-        } else {
-            $photoPath = storage_path("bmps/bmp_{$idbmp}/$filename");
-            if (is_file($photoPath)) {
-                $thumb = Image::make($photoPath)->resize(80, 80,  function ($constraint) {
-                    $constraint->aspectRatio();
-                });
-                $thumb->save($thumbPath);
-               return response()->download($thumbPath);
-            }
-        }
-        return response('', 404);
-    });
+
 
 });
