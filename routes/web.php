@@ -33,16 +33,16 @@ $app->get('/get_mapstyles', function () use ($app) {
 $app->get('getPreview/thumbs/{filename}', function ($filename) {
     $filename = urldecode($filename);
     // $thumbPath = storage_path("bmps/{$mapStyle}/thumb_{$filename}");
-    $thumbPath = storage_path("mapPreviews/{$filename}");
+    $thumbPath = storage_path("mapPreviews/thumbs/{$filename}");
     if (is_file($thumbPath)) {
         return Image::make($thumbPath)->response();
     } else {
-
+        echo "hiya howdy " . $thumbPath;
     }
     return response('', 404);
 });
 
-$app->get('getPreview/full/{filename}', function ($filename) {
+$app->get('getPreview/{filename}', function ($filename) {
     $filename = urldecode($filename);
     // $thumbPath = storage_path("bmps/{$mapStyle}/thumb_{$filename}");
     $thumbPath = storage_path("mapPreviews/{$filename}");
@@ -97,11 +97,22 @@ $app->group(['middleware' => 'auth'], function () use ($app) {
                 $file->move($photoDir, $filename);
 
                 // generate a thumbnail
-                $thumb = Image::make("$photoDir/$filename")->resize(300, null,  function ($constraint) {
+                //if it is wider than tall,
+                $thumb = Image::make("$photoDir/$filename");
+                $height = $thumb->height();
+                $width = $thumb->width();
+                if(($height / $width) > (2/3)){
+                    $wPix = 300;
+                    $hPix = null;
+                } else {
+                    $wPix = null;
+                    $hPix = 200;
+                }
+                $thumb = $thumb->resize($wPix, $hPix,  function ($constraint) {
                     $constraint->aspectRatio();
                 });
                 $thumb->crop(300, 200);
-                $thumb->save("$photoDir/thumb_{$filename}");
+                $thumb->save("$photoThumbDir/{$filename}");
 
                 $list[] = [
                     'filename' => $filename,
