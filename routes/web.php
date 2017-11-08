@@ -81,7 +81,7 @@ $app->group(['middleware' => 'auth'], function () use ($app) {
     });
 
     //Upload Image
-    $app->post('/upload_image/{mapStyle}', function ($mapStyle) use ($app) {
+    $app->post('{id}/upload_image/{mapStyle}', function ($id, $mapStyle) use ($app) {
 
         // only allow images
         $mimeTypes = ['image/png', 'image/jpeg', 'image/gif', 'image/bmp'];
@@ -119,9 +119,13 @@ $app->group(['middleware' => 'auth'], function () use ($app) {
                     'thumb' => "/mapPreviews/$mapStyle/thumbs/$filename",
                     'full' => "/mapPreviews/$mapStyle/photos/$filename"
                 ];
+                echo var_dump($list);
+                $response = app(MapStyles::class)->addImageLink($list[0]['thumb'], $id);
+
             }
         }
-        return response()->json($list, 201);
+        // return response()->json($list, 201);
+        return $response;
 
         // $results = app(MapStyles::class)->editMapStyle($content);
         // echo "shiza";

@@ -52,4 +52,9 @@ class MapStyles
         }
 
     }
+
+    public function addImageLink($url, $id)
+    {
+        echo "the id is $id and the url is $url <br />";
+    }
 }
