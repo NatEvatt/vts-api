@@ -55,6 +55,10 @@ class MapStyles
 
     public function addImageLink($url, $id)
     {
-        echo "the id is $id and the url is $url <br />";
+        $fullUrl = env('APP_URL', '') . $url;
+
+        DB::table('maps.mapstyles')
+            ->where('id', $id)
+            ->update(['image' => $fullUrl]);
     }
 }

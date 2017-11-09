@@ -30,26 +30,34 @@ $app->get('/get_mapstyles', function () use ($app) {
 });
 
 //Display thumbnail
-$app->get('getPreview/thumbs/{filename}', function ($filename) {
+$app->get('mapPreviews/{mapStyle}/thumbs/{filename}', function ($mapStyle, $filename) {
     $filename = urldecode($filename);
     // $thumbPath = storage_path("bmps/{$mapStyle}/thumb_{$filename}");
     $thumbPath = storage_path("mapPreviews/thumbs/{$filename}");
     if (is_file($thumbPath)) {
         return Image::make($thumbPath)->response();
-    } else {
-        echo "hiya howdy " . $thumbPath;
     }
     return response('', 404);
 });
 
+//display full image
 $app->get('getPreview/{filename}', function ($filename) {
     $filename = urldecode($filename);
     // $thumbPath = storage_path("bmps/{$mapStyle}/thumb_{$filename}");
     $thumbPath = storage_path("mapPreviews/{$filename}");
     if (is_file($thumbPath)) {
         return Image::make($thumbPath)->response();
-    } else {
+    }
+    return response('', 404);
+});
 
+//Download thumbnail
+$app->get('mapPreviews/{mapStyle}/download/{filename}', function ($mapStyle, $filename) {
+    $filename = urldecode($filename);
+    // $thumbPath = storage_path("bmps/{$mapStyle}/thumb_{$filename}");
+    $thumbPath = storage_path("mapPreviews/thumbs/{$filename}");
+    if (is_file($thumbPath)) {
+        return response()->download($thumbPath);
     }
     return response('', 404);
 });
@@ -96,6 +104,7 @@ $app->group(['middleware' => 'auth'], function () use ($app) {
                 $filename = 'img_'.date('Ymd-His')."_".$file->getClientOriginalName();
                 $file->move($photoDir, $filename);
 
+                //@TODO move this logic to a controller or somewhere else
                 // generate a thumbnail
                 //if it is wider than tall,
                 $thumb = Image::make("$photoDir/$filename");
@@ -117,19 +126,16 @@ $app->group(['middleware' => 'auth'], function () use ($app) {
                 $list[] = [
                     'filename' => $filename,
                     'thumb' => "/mapPreviews/$mapStyle/thumbs/$filename",
-                    'full' => "/mapPreviews/$mapStyle/photos/$filename"
+                    'full' => "/mapPreviews/$mapStyle/photos/$filename",
+                    'download' => "/mapPreviews/$mapStyle/download/$filename"
                 ];
-                echo var_dump($list);
                 $response = app(MapStyles::class)->addImageLink($list[0]['thumb'], $id);
-
             }
         }
-        // return response()->json($list, 201);
-        return $response;
+        return response()->json($list, 201);
+        // return $response;
 
         // $results = app(MapStyles::class)->editMapStyle($content);
-        // echo "shiza";
-      return "shooza";
     });
 
 
