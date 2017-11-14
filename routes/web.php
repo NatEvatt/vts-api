@@ -125,9 +125,9 @@ $app->group(['middleware' => 'auth'], function () use ($app) {
 
                 $list[] = [
                     'filename' => $filename,
-                    'thumb' => "/mapPreviews/$mapStyle/thumbs/$filename",
-                    'full' => "/mapPreviews/$mapStyle/photos/$filename",
-                    'download' => "/mapPreviews/$mapStyle/download/$filename"
+                    'thumb' => env('APP_URL', '') . "/mapPreviews/$mapStyle/thumbs/$filename",
+                    'full' => env('APP_URL', '') . "/mapPreviews/$mapStyle/photos/$filename",
+                    'download' => env('APP_URL', '') . "/mapPreviews/$mapStyle/download/$filename"
                 ];
                 $response = app(MapStyles::class)->addImageLink($list[0]['thumb'], $id);
             }
