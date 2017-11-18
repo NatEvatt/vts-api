@@ -43,14 +43,18 @@ class MapStyles
 
     public function editMapStyle($data)
     {
-        $mapStyle = DB::select('SELCT * FROM maps.mapstyles WHERE id = ?', [ $data->id ]);
-        if($mapStyle !== $data->user_id){
-            return response('Forbidden', 403);
-        } else {
-            $id = DB::table('maps.mapstyles')->insertGetId($data);
-            return $id;
-        }
+        // $id = DB::table('maps.mapstyles')->insertGetId($data);
+        $where = [
+          'id' => $data['id']
+        ];
+        DB::table('maps.mapstyles')->where($where)->update($data);
+        return $data['id'];
+    }
 
+    public function getMapStyleById($id)
+    {
+        $mapStyle = DB::selectOne('SELECT * FROM maps.mapstyles WHERE id = ?', [ $id ]);
+        return $mapStyle;
     }
 
     public function addImageLink($url, $id)

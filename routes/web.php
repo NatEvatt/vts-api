@@ -83,6 +83,14 @@ $app->group(['middleware' => 'auth'], function () use ($app) {
     //Edit Map Style
     $app->post('/edit_map_style', function () use ($app) {
         $content = json_decode(app()->request->getContent(), true);
+        $mapStyle = app(MapStyles::class)->getMapStyleById($content['id']);
+        $user = app()->request->user();
+        if($mapStyle->user_id !== $user->user_id){
+            return response('Forbidden', 403);
+        }
+
+        // $content['user_id'] = app()->request->user()->user_id;
+        unset($content['editable']);
         $content['user_id'] = app()->request->user()->user_id;
         $results = app(MapStyles::class)->editMapStyle($content);
       return $results;
