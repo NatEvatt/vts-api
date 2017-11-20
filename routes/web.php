@@ -96,6 +96,21 @@ $app->group(['middleware' => 'auth'], function () use ($app) {
       return $results;
     });
 
+    //Delete Map Style
+    $app->post('/delete_map_style', function () use ($app) {
+        $content = json_decode(app()->request->getContent(), true);
+        $mapStyle = app(MapStyles::class)->getMapStyleById($content['id']);
+        $user = app()->request->user();
+        if($mapStyle->user_id !== $user->user_id){
+            return response('Forbidden', 403);
+        }
+
+        // $content['user_id'] = app()->request->user()->user_id;
+        app(MapStyles::class)->deleteMapStyle($content['id']);
+        $completeString = $content['name'] . " has been successfully deleted. ";
+        return $completeString;
+    });
+
     //Upload Image
     $app->post('{id}/upload_image/{mapStyle}', function ($id, $mapStyle) use ($app) {
 

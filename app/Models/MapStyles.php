@@ -51,6 +51,15 @@ class MapStyles
         return $data['id'];
     }
 
+    public function deleteMapStyle($id)
+    {
+        // $id = DB::table('maps.mapstyles')->insertGetId($data);
+        $where = [
+          'id' => $id
+        ];
+        $data = DB::table('maps.mapstyles')->where($where)->delete();
+    }
+
     public function getMapStyleById($id)
     {
         $mapStyle = DB::selectOne('SELECT * FROM maps.mapstyles WHERE id = ?', [ $id ]);
