@@ -29,6 +29,12 @@ $app->get('/get_mapstyles', function () use ($app) {
   return $data;
 });
 
+//getTileInfo
+$app->get('/get_tile_info', function () use ($app) {
+  // $data = app(MapStyles::class)->getMapStyles();
+  return [500, 1000];
+});
+
 //Display thumbnail
 $app->get('mapPreviews/{mapStyle}/thumbs/{filename}', function ($mapStyle, $filename) {
     $filename = urldecode($filename);
