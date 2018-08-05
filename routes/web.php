@@ -12,12 +12,12 @@ $app->get('/', function () use ($app) {
         @keyframes colorchange{0%{color:#8be9fd;}10%{color:#50fa7b;}30%{color:#ffb86c;}50%
         {color:#ff79c6;}70%{color:#bd93f9;}90%{color:#6272a4;}100% {color:#8be9fd;}}
         </style><pre>
-____   _______________         _____ __________.___
-\   \ /   /\__    ___/        /  _  \\______   \   |
- \   Y   /   |    |  ______  /  /_\  \|     ___/   |
-  \     /    |    | /_____/ /    |    \    |   |   |
-   \___/     |____|         \____|__  /____|   |___|
-                                    \/
+        ____   ________________________            _____ __________.___
+        \   \ /   /\__    ___/   _____/           /  _  \\______   \   |
+         \   Y   /   |    |  \_____  \   ______  /  /_\  \|     ___/   |
+          \     /    |    |  /        \ /_____/ /    |    \    |   |   |
+           \___/     |____| /_______  /         \____|__  /____|   |___|
+                                    \/                  \/
 
         Running on {$app->version()} </pre>";
 });
@@ -29,11 +29,7 @@ $app->get('/get_mapstyles', function () use ($app) {
   return $data;
 });
 
-//getTileInfo
-$app->get('/get_tile_info', function () use ($app) {
-  // $data = app(MapStyles::class)->getMapStyles();
-  return [500, 1000];
-});
+
 
 //Display thumbnail
 $app->get('mapPreviews/{mapStyle}/thumbs/{filename}', function ($mapStyle, $filename) {
