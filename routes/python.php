@@ -22,19 +22,19 @@ $app->group(['middleware' => 'auth'], function () use ($app) {
     });
 
     //getTileInfo
-    $app->get('/get_tile_info', function () use ($app) {
-      $zoom = 14;
+    $app->post('/get_tile_info', function () use ($app) {
+      $zoom = app()->request->input('zoom');
       $top_left_lat = 36.985003092;
       $top_left_lon = -122.0581054;
       $bottom_right_lat = 36.949891786;
       $bottom_right_lon = -121.9702148;
 
       $process = new Process(env('PYTHON_ENV') . " " . env('PYTHON_DIR') . "main.py get_tile_info {$zoom} {$top_left_lat} {$top_left_lon} {$bottom_right_lat} {$bottom_right_lon} ");
-      // echo(process);
       $process->run();
       if (!$process->isSuccessful()) {
           throw new ProcessFailedException($process);
       }
+      // return json_encode($process->getOutput());
       return $process->getOutput();
     });
 
