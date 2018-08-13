@@ -43,8 +43,12 @@ $app->group(['middleware' => 'auth'], function () use ($app) {
       $top_left_lon = app()->request->input('top_left_lon');
       $bottom_right_lat = app()->request->input('bottom_right_lat');
       $bottom_right_lon = app()->request->input('bottom_right_lon');
+      $styleId = app()->request->input('styleId');
+      $userName = app()->request->input('userName');
 
-      $process = new Process(env('PYTHON_ENV') . " " . env('PYTHON_DIR') . "main.py vt_print {$zoom} {$top_left_lat} {$top_left_lon} {$bottom_right_lat} {$bottom_right_lon} ");
+      // $processString = env('PYTHON_ENV') . " " . env('PYTHON_DIR') . "main.py vt_print {$zoom} {$top_left_lat} {$top_left_lon} {$bottom_right_lat} {$bottom_right_lon} ";
+      // echo $processString;
+      $process = new Process(env('PYTHON_ENV') . " " . env('PYTHON_DIR') . "main.py vt_print {$zoom} {$top_left_lat} {$top_left_lon} {$bottom_right_lat} {$bottom_right_lon} -s {$styleId} -u {$userName}");
       $process->run();
       if (!$process->isSuccessful()) {
           throw new ProcessFailedException($process);
