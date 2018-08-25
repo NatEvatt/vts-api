@@ -28,8 +28,12 @@ $app->group(['middleware' => 'auth'], function () use ($app) {
       $top_left_lon = app()->request->input('top_left_lon');
       $bottom_right_lat = app()->request->input('bottom_right_lat');
       $bottom_right_lon = app()->request->input('bottom_right_lon');
+      $retina = app()->request->input('retina');
+      $pixels = app()->request->input('pixelCount');
 
-      $process = new Process(env('PYTHON_ENV') . " " . env('PYTHON_DIR') . "main.py get_tile_info {$zoom} {$top_left_lat} {$top_left_lon} {$bottom_right_lat} {$bottom_right_lon} ");
+      $process = new Process(env('PYTHON_ENV') . " " . env('PYTHON_DIR') . "main.py get_tile_info ".
+      "{$zoom} {$top_left_lat} {$top_left_lon} {$bottom_right_lat} {$bottom_right_lon} " .
+      "-r {$retina} -p {$pixels}");
       $process->run();
       if (!$process->isSuccessful()) {
           throw new ProcessFailedException($process);
@@ -43,12 +47,16 @@ $app->group(['middleware' => 'auth'], function () use ($app) {
       $top_left_lon = app()->request->input('top_left_lon');
       $bottom_right_lat = app()->request->input('bottom_right_lat');
       $bottom_right_lon = app()->request->input('bottom_right_lon');
+      $retina = app()->request->input('retina');
+      $pixels = app()->request->input('pixelCount');
       $styleId = app()->request->input('styleId');
       $userName = app()->request->input('userName');
 
       // $processString = env('PYTHON_ENV') . " " . env('PYTHON_DIR') . "main.py vt_print {$zoom} {$top_left_lat} {$top_left_lon} {$bottom_right_lat} {$bottom_right_lon} ";
       // echo $processString;
-      $process = new Process(env('PYTHON_ENV') . " " . env('PYTHON_DIR') . "main.py vt_print {$zoom} {$top_left_lat} {$top_left_lon} {$bottom_right_lat} {$bottom_right_lon} -s {$styleId} -u {$userName}");
+      $process = new Process(env('PYTHON_ENV') . " " . env('PYTHON_DIR') . "main.py vt_print ".
+      "{$zoom} {$top_left_lat} {$top_left_lon} {$bottom_right_lat} {$bottom_right_lon} " .
+      "-s {$styleId} -u {$userName} -r {$retina} -p {$pixels} ");
       $process->run();
       if (!$process->isSuccessful()) {
           throw new ProcessFailedException($process);
