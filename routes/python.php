@@ -61,7 +61,9 @@ $app->group(['middleware' => 'auth'], function () use ($app) {
       if (!$process->isSuccessful()) {
           throw new ProcessFailedException($process);
       }
-      return $process->getOutput();
+      $filePath = storage_path('images/mapGrid_real.png');
+      return Image::make($filePath)->response();
+      // return response()->download($filePath);
     });
 
     $app->get('/create-agol-group/{groupId}', function ($groupId) {

@@ -29,8 +29,6 @@ $app->get('/get_mapstyles', function () use ($app) {
   return $data;
 });
 
-
-
 //Display thumbnail
 $app->get('mapPreviews/{mapStyle}/thumbs/{filename}', function ($mapStyle, $filename) {
     $filename = urldecode($filename);
@@ -45,7 +43,6 @@ $app->get('mapPreviews/{mapStyle}/thumbs/{filename}', function ($mapStyle, $file
 //display full image
 $app->get('getPreview/{filename}', function ($filename) {
     $filename = urldecode($filename);
-    // $thumbPath = storage_path("bmps/{$mapStyle}/thumb_{$filename}");
     $thumbPath = storage_path("mapPreviews/{$filename}");
     if (is_file($thumbPath)) {
         return Image::make($thumbPath)->response();
@@ -56,7 +53,6 @@ $app->get('getPreview/{filename}', function ($filename) {
 //Download thumbnail
 $app->get('mapPreviews/{mapStyle}/download/{filename}', function ($mapStyle, $filename) {
     $filename = urldecode($filename);
-    // $thumbPath = storage_path("bmps/{$mapStyle}/thumb_{$filename}");
     $thumbPath = storage_path("mapPreviews/thumbs/{$filename}");
     if (is_file($thumbPath)) {
         return response()->download($thumbPath);
@@ -66,11 +62,10 @@ $app->get('mapPreviews/{mapStyle}/download/{filename}', function ($mapStyle, $fi
 
 $app->group(['middleware' => 'auth'], function () use ($app) {
 //Must have a token for all api routes here
-
     //Test
     $app->get('/howdy', function () use ($app) {
         $name = app()->request->user()->name;
-        $thisVar = "Yo What up Blood! The username is " . $name;
+        $thisVar = "The username is " . $name;
         return $thisVar;
     });
 
@@ -91,7 +86,6 @@ $app->group(['middleware' => 'auth'], function () use ($app) {
             return response('Forbidden', 403);
         }
 
-        // $content['user_id'] = app()->request->user()->user_id;
         unset($content['editable']);
         $content['user_id'] = app()->request->user()->user_id;
         $results = app(MapStyles::class)->editMapStyle($content);
@@ -130,8 +124,7 @@ $app->group(['middleware' => 'auth'], function () use ($app) {
                 $file->move($photoDir, $filename);
 
                 //@TODO move this logic to a controller or somewhere else
-                // generate a thumbnail
-                //if it is wider than tall,
+                // generate a thumbnail if it is wider than tall,
                 $thumb = Image::make("$photoDir/$filename");
                 $height = $thumb->height();
                 $width = $thumb->width();
@@ -158,9 +151,6 @@ $app->group(['middleware' => 'auth'], function () use ($app) {
             }
         }
         return response()->json($list, 201);
-        // return $response;
-
-        // $results = app(MapStyles::class)->editMapStyle($content);
     });
 
 
